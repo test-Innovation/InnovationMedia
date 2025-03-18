@@ -1,0 +1,77 @@
+﻿@model List<Mediamodel>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        #mediaContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        video,img,iframe{max-width:100vw;height:100vh;display:none;}
+
+     
+
+
+    </style>
+</head>
+<body>
+    <div id="mediaContainer">
+    @foreach(var item in Model){
+        if(item.Type == "video")
+        {
+              <video class="mediaItem" fullscreen muted>
+                <source src="@item.Source" type="video/mp4"/>
+            </video>
+        }
+        else if (item.Type == "image")
+        {
+                <img class="mediaItem" fullscreen src="@item.Source" />
+        }
+        else if (item.Type == "pdf")
+        {
+                <iframe class="mediaItem" fullscreen src="@item.Source" width="800" height="600"></iframe>
+        }
+    }
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            let mediaItems=$(".mediaItem");
+            let index=0;
+
+            function showNext(){
+                mediaItems.hide();
+                let current=$(mediaItems[index]);
+
+                if(current.is("video")){
+                    current.show();
+                    current[0].play();
+                    current.on("ended",function(){
+                        index=(index+1)% mediaItems.length;
+                        showNext();
+                    });
+
+                }
+                else{
+                    current.show();
+                    setTimeout(function(){
+                         index=(index+1)% mediaItems.length;
+                        showNext();
+                    },5000);
+                }
+            }
+            showNext();
+        });
+    </script>
+</body>
+</html>
